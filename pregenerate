@@ -1,0 +1,16 @@
+#!/bin/bash
+
+GO_CMD=go
+
+installTool() {
+  cmd=$1
+  url=$2
+  expectedVer=$3
+
+   ver="$(${cmd} -version 2>/dev/null)"
+  if [ "$ver" != "$expectedVer" ]; then
+    ${GO_CMD} install ${url}@${expectedVer}
+  fi
+}
+installTool "wireprovider" "github.com/domesama/wireprovider@v1.0.2"
+installTool "wire" "github.com/wireinject/wire v0.7.1"
