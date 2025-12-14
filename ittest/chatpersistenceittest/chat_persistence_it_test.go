@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/domesama/chat-and-notifications/chat"
+	"github.com/domesama/chat-and-notifications/chatstream"
 	"github.com/domesama/chat-and-notifications/ittest/stub"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/domesama/chat-and-notifications/outgoinghttp"
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/bson"
@@ -38,10 +39,10 @@ func (t *ChatPersistenceITTestSuite) TestPersistingDataToMongo() {
 
 	t.callChatPersistenceServer(ctx, chatMessages...)
 
-	t.assertChatMessageInDatabase(ctx, chat.ComputeStreamID("sender-a", "receiver-b"), chatMessages...)
+	t.assertChatMessageInDatabase(ctx, chatstream.ComputeStreamID("sender-a", "receiver-b"), chatMessages...)
 }
 
-func (t *ChatPersistenceITTestSuite) callChatPersistenceServer(ctx context.Context, message ...chat.ChatMessage) {
+func (t *ChatPersistenceITTestSuite) callChatPersistenceServer(ctx context.Context, message ...model.ChatMessage) {
 	port := t.cnt.HTTPServer.GetRunningPort()
 
 	for _, msg := range message {
@@ -52,7 +53,7 @@ func (t *ChatPersistenceITTestSuite) callChatPersistenceServer(ctx context.Conte
 		)
 
 		client := &http.Client{}
-		resp, statusCode, err := outgoinghttp.CallHTTP[chat.ChatMessage](ctx, client, req)
+		resp, statusCode, err := outgoinghttp.CallHTTP[model.ChatMessage](ctx, client, req)
 
 		t.Equal(statusCode, http.StatusCreated)
 		t.NoError(err)
@@ -64,10 +65,10 @@ func (t *ChatPersistenceITTestSuite) callChatPersistenceServer(ctx context.Conte
 func (t *ChatPersistenceITTestSuite) assertChatMessageInDatabase(
 	ctx context.Context,
 	streamID string,
-	expectedChatMessages ...chat.ChatMessage,
+	expectedChatMessages ...model.ChatMessage,
 ) {
 
-	var chatMessages []chat.ChatMessage
+	var chatMessages []model.ChatMessage
 
 	cursor, err := t.cnt.Database.Collection("chat").Find(
 		ctx,

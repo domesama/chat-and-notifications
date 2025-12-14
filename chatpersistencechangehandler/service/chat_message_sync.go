@@ -27,6 +27,9 @@ func (c ChatMessageSyncService) ForwardChatMessageToWebsocketServices(
 		},
 	)
 
+	// We might or might not also want to forward chat messages to general notification service.
+	// This behavior can be triggered in another kafka consumer group alongside the another cdc responsible for forwarding emails.
+	// Read the architechture.md file to learn more about this design decision.
 	forwardChatToGeneralNotificationWebSocket := concurrent.NewTask(
 		func(ctx context.Context) error {
 			return c.forwardChatToGeneralNotificationWebSocket(ctx, msg)
@@ -66,7 +69,7 @@ func (c ChatMessageSyncService) forwardChatToGeneralNotificationWebSocket(
 
 	request := outgoinghttp.BuildBasicRequest(
 		http.MethodPost,
-		conf.Host+"/noti/chat",
+		conf.Host+"/notifications/chat",
 		outgoinghttp.WithAdditionalBody(msg.ChatMessage),
 	)
 

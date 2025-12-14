@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/domesama/chat-and-notifications/chat"
+	"github.com/domesama/chat-and-notifications/model"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -12,7 +12,7 @@ type ChatPersistenceService struct {
 	DB *mongo.Database
 }
 
-func (c ChatPersistenceService) PersistChatMessage(ctx context.Context, message chat.ChatMessage) (err error) {
+func (c ChatPersistenceService) PersistChatMessage(ctx context.Context, message model.ChatMessage) (err error) {
 	_, err = c.DB.Collection("chat").InsertOne(ctx, message)
 	return
 }

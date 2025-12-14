@@ -6,10 +6,10 @@ import (
 
 // RedisClientConfig contains Redis connection settings
 type RedisClientConfig struct {
-	Addr     string `envconfig:"ADDR" required:"true"`
-	Password string `envconfig:"PASSWORD" default:""`
-	DB       int    `envconfig:"DB" default:"0"`
-	PoolSize int    `envconfig:"POOL_SIZE" default:"10"`
+	Addr     string `envconfig:"REDIS_ADDR" required:"true"`
+	Password string `envconfig:"REDIS_PASSWORD" default:""`
+	DB       int    `envconfig:"REDIS_DB" default:"0"`
+	PoolSize int    `envconfig:"REDIS_POOL_SIZE" default:"10"`
 }
 
 func ProvideRedisClientConfig() (conf RedisClientConfig) {

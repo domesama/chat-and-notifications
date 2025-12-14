@@ -1,6 +1,7 @@
 package ittest
 
 import (
+	"context"
 	"time"
 
 	"github.com/domesama/chat-and-notifications/chatpersistencechangehandler/config"
@@ -54,6 +55,9 @@ func (t *BaseChatPersistenceChangeHandlerITTestSuite) SetupSuite() {
 			return kafkawrapper.ConsumerGroup(t.cnt.ChatPersistenceChangeHandlerContainer.ChatPersistenceChangeHandler).IsRunning()
 		}, 5*time.Second, 500*time.Millisecond, "Consumer group is not ready",
 	)
+
+	// Flush all keys in the event store Redis before each suite
+	t.cnt.RedisClient.FlushAll(context.Background())
 }
 
 func (t *BaseChatPersistenceChangeHandlerITTestSuite) WithKafkaConsumerInfo(cfg *config.ChatPersistenceChangeHandlerConfig) {

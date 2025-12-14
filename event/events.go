@@ -40,7 +40,7 @@ func covertSaramaMessagePayload[MsgValue any](handler BaseMessageHandler[MsgValu
 	value, shouldDrop, err := handler.ConvertMessageValue(msg.Value)
 
 	if err != nil {
-		slog.Error("[covertSaramaMessagePayload] Failed to convert message key [%s], %s", msg.Key, err.Error())
+		slog.Error("[covertSaramaMessagePayload] Failed to convert message", "key", msg.Key, "error", err.Error())
 		shouldDrop = true
 	}
 

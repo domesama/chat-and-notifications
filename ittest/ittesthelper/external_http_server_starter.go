@@ -46,7 +46,7 @@ func StartHTTPServer(t *testing.T, beforeServerStartFn BeforeServerStartFn) int 
 	t.Cleanup(
 		func() {
 			if err := server.Shutdown(ctx); err != nil {
-				slog.Error("cannot shutdown http server", err)
+				slog.Error("cannot shutdown http server", "err", err)
 			}
 		},
 	)

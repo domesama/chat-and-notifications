@@ -17,6 +17,7 @@ test_report/*
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 *.coverprofile
+coverage.html
 .scannerwork/
 
 # Library

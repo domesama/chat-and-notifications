@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/domesama/chat-and-notifications/chat"
+	"github.com/domesama/chat-and-notifications/chatstream"
 	"github.com/domesama/chat-and-notifications/ittest/stub"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/domesama/chat-and-notifications/outgoinghttp"
 	"github.com/domesama/chat-and-notifications/websocket"
 	"github.com/stretchr/testify/suite"
@@ -58,11 +59,11 @@ func (t *ChatWebSocketHandlerITTestSuite) subscribeToChatWebSocket(
 	ctx context.Context,
 	senderID string,
 	receiverID string,
-) chan chat.ChatMessage {
+) chan model.ChatMessage {
 	port := t.cnt.HTTPServer.GetRunningPort()
 
-	metadata := chat.ChatMetadata{
-		StreamID:   chat.ComputeStreamID(senderID, receiverID),
+	metadata := model.ChatMetadata{
+		StreamID:   chatstream.ComputeStreamID(senderID, receiverID),
 		SenderID:   senderID,
 		ReceiverID: receiverID,
 	}
@@ -72,7 +73,7 @@ func (t *ChatWebSocketHandlerITTestSuite) subscribeToChatWebSocket(
 		port, metadata.StreamID, metadata.SenderID, metadata.ReceiverID,
 	)
 
-	msgChan, cleanup, err := websocket.SubscribeToWebSocket[chat.ChatMessage](ctx, wsURL)
+	msgChan, cleanup, err := websocket.SubscribeToWebSocket[model.ChatMessage](ctx, wsURL)
 	t.NoError(err)
 	t.T().Cleanup(cleanup)
 
@@ -80,7 +81,7 @@ func (t *ChatWebSocketHandlerITTestSuite) subscribeToChatWebSocket(
 }
 
 func (t *ChatWebSocketHandlerITTestSuite) callChatSocketForwardingAPI(ctx context.Context,
-	message ...chat.ChatMessage) {
+	message ...model.ChatMessage) {
 	port := t.cnt.HTTPServer.GetRunningPort()
 
 	for _, msg := range message {
@@ -100,9 +101,9 @@ func (t *ChatWebSocketHandlerITTestSuite) callChatSocketForwardingAPI(ctx contex
 }
 
 func (t *ChatWebSocketHandlerITTestSuite) assertChatMessages(
-	msgChan <-chan chat.ChatMessage,
-	expectedMessages ...chat.ChatMessage) (done chan bool) {
-	actualMessages := make([]chat.ChatMessage, 0, len(expectedMessages))
+	msgChan <-chan model.ChatMessage,
+	expectedMessages ...model.ChatMessage) (done chan bool) {
+	actualMessages := make([]model.ChatMessage, 0, len(expectedMessages))
 	done = make(chan bool)
 
 	go func() {

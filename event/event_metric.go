@@ -18,7 +18,7 @@ type EventMetric struct {
 }
 
 func (m EventMetric) IncrementDropDueToInvalidEvent(ctx context.Context) {
-	slog.Warn("[HandleEvent] Event dropped due to", EventReasonInvalidEvent)
+	slog.Warn("[HandleEvent] Event dropped due to", "reason", EventReasonInvalidEvent)
 	m.DroppedEventMetric.Add(
 		ctx, 1,
 		CreateMetricLabel(EventAttributeDropReason, EventReasonInvalidEvent),
@@ -27,8 +27,8 @@ func (m EventMetric) IncrementDropDueToInvalidEvent(ctx context.Context) {
 
 func (m EventMetric) IncrementDropDueToFailedEventStoreValidation(ctx context.Context) {
 	slog.Warn(
-		"[HandleEvent] Event entirely dropped due to %v",
-		EventReasonDroppedFromEventStoreValidation,
+		"[HandleEvent] Event entirely dropped due to",
+		"reason", EventReasonDroppedFromEventStoreValidation,
 	)
 
 	m.DroppedEventMetric.Add(
@@ -38,7 +38,7 @@ func (m EventMetric) IncrementDropDueToFailedEventStoreValidation(ctx context.Co
 }
 
 func (m EventMetric) IncrementDropWithCustomReason(ctx context.Context, reason string) {
-	slog.Warn("[HandleEvent] Event dropped due to %v", reason)
+	slog.Warn("[HandleEvent] Event dropped due to", "reason", reason)
 	m.DroppedEventMetric.Add(
 		ctx, 1,
 		CreateMetricLabel(EventAttributeDropReason, MetricLabelValue(reason)),
@@ -72,12 +72,6 @@ func CreateEventTypeLabel[MsgValue any](
 ) metric.MeasurementOption {
 	return metric.WithAttributes(
 		attribute.String(EventAttributeEventType.ToString(), msgHandler.GetEventType(message)),
-	)
-}
-
-func GetEventTypeLabel(eventType string) metric.MeasurementOption {
-	return metric.WithAttributes(
-		attribute.String(EventAttributeEventType.ToString(), eventType),
 	)
 }
 

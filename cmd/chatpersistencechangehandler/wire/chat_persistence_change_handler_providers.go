@@ -11,6 +11,7 @@ import (
 
 var ProviderSet = wire.NewSet(
 	hyhngchatpersistencechangehandler.ProvideChatPersistenceChangeEventMetric,
+	hyhngchatpersistencechangehandler.ProvideChatPersistenceChangeEventStore,
 	hyhngchatpersistencechangehandler.ProvideChatPersistenceChangeHandler,
 	wire.Struct(new(hyhngchatpersistencechangehandler.ChatPersistenceChangeMessageHandler), "*"),
 	wire.Struct(new(zpmevservice.ChatMessageSyncService), "*"),
@@ -18,6 +19,7 @@ var ProviderSet = wire.NewSet(
 
 type Locator struct {
 	ChatPersistenceChangeEventMetric    hyhngchatpersistencechangehandler.ChatPersistenceChangeEventMetric
+	ChatPersistenceChangeEventStore     hyhngchatpersistencechangehandler.ChatPersistenceChangeEventStore
 	ChatPersistenceChangeHandler        hyhngchatpersistencechangehandler.ChatPersistenceChangeHandler
 	ChatPersistenceChangeMessageHandler *hyhngchatpersistencechangehandler.ChatPersistenceChangeMessageHandler
 	ChatMessageSyncService              *zpmevservice.ChatMessageSyncService

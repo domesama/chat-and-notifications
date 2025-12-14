@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/domesama/chat-and-notifications/chat"
+	"github.com/domesama/chat-and-notifications/chatstream"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/domesama/chat-and-notifications/outgoinghttp"
 )
 
@@ -15,15 +16,15 @@ func (t *ChatPersistenceITTestSuite) TestInvalidMessages() {
 
 	testCases := []struct {
 		name        string
-		message     chat.ChatMessage
+		message     model.ChatMessage
 		description string
 	}{
 		{
 			name: "EmptyContent",
-			message: chat.ChatMessage{
+			message: model.ChatMessage{
 				Content: "",
-				ChatMetadata: chat.ChatMetadata{
-					StreamID:   chat.ComputeStreamID("sender-1", "receiver-1"),
+				ChatMetadata: model.ChatMetadata{
+					StreamID:   chatstream.ComputeStreamID("sender-1", "receiver-1"),
 					SenderID:   "sender-1",
 					ReceiverID: "receiver-1",
 				},
@@ -32,9 +33,9 @@ func (t *ChatPersistenceITTestSuite) TestInvalidMessages() {
 		},
 		{
 			name: "MissingStreamID",
-			message: chat.ChatMessage{
+			message: model.ChatMessage{
 				Content: "Hello",
-				ChatMetadata: chat.ChatMetadata{
+				ChatMetadata: model.ChatMetadata{
 					StreamID:   "",
 					SenderID:   "sender-1",
 					ReceiverID: "receiver-1",
@@ -44,10 +45,10 @@ func (t *ChatPersistenceITTestSuite) TestInvalidMessages() {
 		},
 		{
 			name: "MissingSenderID",
-			message: chat.ChatMessage{
+			message: model.ChatMessage{
 				Content: "Hello",
-				ChatMetadata: chat.ChatMetadata{
-					StreamID:   chat.ComputeStreamID("sender-1", "receiver-1"),
+				ChatMetadata: model.ChatMetadata{
+					StreamID:   chatstream.ComputeStreamID("sender-1", "receiver-1"),
 					SenderID:   "",
 					ReceiverID: "receiver-1",
 				},
@@ -56,10 +57,10 @@ func (t *ChatPersistenceITTestSuite) TestInvalidMessages() {
 		},
 		{
 			name: "MissingReceiverID",
-			message: chat.ChatMessage{
+			message: model.ChatMessage{
 				Content: "Hello",
-				ChatMetadata: chat.ChatMetadata{
-					StreamID:   chat.ComputeStreamID("sender-1", "receiver-1"),
+				ChatMetadata: model.ChatMetadata{
+					StreamID:   chatstream.ComputeStreamID("sender-1", "receiver-1"),
 					SenderID:   "sender-1",
 					ReceiverID: "",
 				},
@@ -113,10 +114,10 @@ func (t *ChatPersistenceITTestSuite) TestValidContentVariations() {
 		t.Run(
 			tc.name, func() {
 				receiverID := "receiver-" + tc.senderID[7:] // Extract number from sender ID
-				chatMessage := chat.ChatMessage{
+				chatMessage := model.ChatMessage{
 					Content: tc.content,
-					ChatMetadata: chat.ChatMetadata{
-						StreamID:   chat.ComputeStreamID(tc.senderID, receiverID),
+					ChatMetadata: model.ChatMetadata{
+						StreamID:   chatstream.ComputeStreamID(tc.senderID, receiverID),
 						SenderID:   tc.senderID,
 						ReceiverID: receiverID,
 					},
@@ -134,7 +135,7 @@ func (t *ChatPersistenceITTestSuite) TestValidContentVariations() {
 }
 
 func (t *ChatPersistenceITTestSuite) callChatPersistenceAPI(ctx context.Context,
-	message chat.ChatMessage) (chat.ChatMessage, int) {
+	message model.ChatMessage) (model.ChatMessage, int) {
 	port := t.cnt.HTTPServer.GetRunningPort()
 
 	req := outgoinghttp.BuildBasicRequest(
@@ -144,7 +145,7 @@ func (t *ChatPersistenceITTestSuite) callChatPersistenceAPI(ctx context.Context,
 	)
 
 	client := &http.Client{}
-	resp, statusCode, _ := outgoinghttp.CallHTTP[chat.ChatMessage](ctx, client, req)
+	resp, statusCode, _ := outgoinghttp.CallHTTP[model.ChatMessage](ctx, client, req)
 
 	return resp, statusCode
 }

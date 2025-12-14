@@ -2,6 +2,8 @@ package wire
 
 import (
 	"github.com/domesama/chat-and-notifications/chatpersistencechangehandler"
+	"github.com/domesama/chat-and-notifications/connections"
+	"github.com/domesama/chat-and-notifications/eventstore"
 	"github.com/domesama/doakes/doakeswire"
 	doakes "github.com/domesama/doakes/server"
 	"github.com/google/wire"
@@ -21,6 +23,9 @@ func (r *ChatPersistenceChangeHandlerContainer) GetMonitoringServer() *doakes.Te
 var MainBindingSet = wire.NewSet(
 	LibSet,
 	ProviderSet,
+
+	connections.RedisSet,
+	eventstore.ProvideRedisEventStoreConfig,
 
 	wire.Struct(new(ChatPersistenceChangeHandlerContainer), "*"),
 )

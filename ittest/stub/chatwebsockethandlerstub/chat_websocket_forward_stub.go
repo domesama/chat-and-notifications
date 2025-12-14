@@ -3,8 +3,8 @@ package chatwebsockethandlerstub
 import (
 	"net/http"
 
-	"github.com/domesama/chat-and-notifications/chat"
 	"github.com/domesama/chat-and-notifications/ittest/stub"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,12 +27,12 @@ func (c *ChatWebSocketForwarderStub) AddForwardChatMessageToWebSocketStub(stub .
 }
 
 type ChatWebSocketForwardAPIStub struct {
-	Predicates     stub.Predicates[chat.ChatMessage]
+	Predicates     stub.Predicates[model.ChatMessage]
 	StubStatusCode int
 }
 
 func (c *ChatWebSocketForwarderStub) forwardChatMessageToSubscribers(gctx *gin.Context) {
-	var chatMessage chat.ChatMessage
+	var chatMessage model.ChatMessage
 	if err := gctx.ShouldBindJSON(&chatMessage); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/domesama/chat-and-notifications/chat"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/domesama/chat-and-notifications/websocket"
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +18,7 @@ type ChatWebSocketHandler struct {
 func (c ChatWebSocketHandler) ForwardChatMessageToSubscribers(gctx *gin.Context) {
 	ctx := gctx.Request.Context()
 
-	var chatMessage chat.ChatMessage
+	var chatMessage model.ChatMessage
 	if err := gctx.ShouldBindJSON(&chatMessage); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

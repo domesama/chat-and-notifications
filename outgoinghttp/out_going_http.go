@@ -71,7 +71,7 @@ func CallHTTP[T any](
 		defer func() {
 			err = response.Body.Close()
 			if err != nil {
-				slog.Warn("unable to close response.Body", err)
+				slog.Warn("unable to close response.Body", "error", err)
 			}
 		}()
 	}

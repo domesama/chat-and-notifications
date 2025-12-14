@@ -10,6 +10,9 @@ import (
 	"github.com/domesama/chat-and-notifications/chatpersistencechangehandler"
 	"github.com/domesama/chat-and-notifications/chatpersistencechangehandler/config"
 	"github.com/domesama/chat-and-notifications/chatpersistencechangehandler/service"
+	"github.com/domesama/chat-and-notifications/connections"
+	"github.com/domesama/chat-and-notifications/connections/connectionconfig"
+	"github.com/domesama/chat-and-notifications/eventstore"
 	"github.com/domesama/doakes/doakeswire"
 )
 
@@ -37,8 +40,17 @@ func StartChatPersistenceChangeHandlerContainer(chatPersistenceChangeHandlerConf
 		ChatMessageSyncService: chatMessageSyncService,
 	}
 	chatPersistenceChangeEventMetric := chatpersistencechangehandler.ProvideChatPersistenceChangeEventMetric()
-	chatPersistenceChangeHandler, cleanup2, err := chatpersistencechangehandler.ProvideChatPersistenceChangeHandler(chatPersistenceChangeHandlerConfig, telemetryServer, chatPersistenceChangeMessageHandler, chatPersistenceChangeEventMetric)
+	redisClientConfig := connectionconfig.ProvideRedisClientConfig()
+	client, cleanup2, err := connections.ProvideRedisClient(redisClientConfig)
 	if err != nil {
+		cleanup()
+		return ChatPersistenceChangeHandlerContainer{}, nil, err
+	}
+	redisEventStoreConfig := eventstore.ProvideRedisEventStoreConfig()
+	chatPersistenceChangeEventStore := chatpersistencechangehandler.ProvideChatPersistenceChangeEventStore(client, redisEventStoreConfig)
+	chatPersistenceChangeHandler, cleanup3, err := chatpersistencechangehandler.ProvideChatPersistenceChangeHandler(chatPersistenceChangeHandlerConfig, telemetryServer, chatPersistenceChangeMessageHandler, chatPersistenceChangeEventMetric, chatPersistenceChangeEventStore)
+	if err != nil {
+		cleanup2()
 		cleanup()
 		return ChatPersistenceChangeHandlerContainer{}, nil, err
 	}
@@ -47,6 +59,7 @@ func StartChatPersistenceChangeHandlerContainer(chatPersistenceChangeHandlerConf
 		ChatPersistenceChangeHandler: chatPersistenceChangeHandler,
 	}
 	return chatPersistenceChangeHandlerContainer, func() {
+		cleanup3()
 		cleanup2()
 		cleanup()
 	}, nil

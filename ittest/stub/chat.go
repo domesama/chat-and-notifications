@@ -2,11 +2,13 @@ package stub
 
 import (
 	"context"
+	"fmt"
 	"slices"
 	"testing"
 
-	"github.com/domesama/chat-and-notifications/chat"
+	"github.com/domesama/chat-and-notifications/chatstream"
 	"github.com/domesama/chat-and-notifications/eventmodel"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/gotidy/ptr"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,14 +17,15 @@ import (
 func CreateChatMessages(
 	sender string,
 	receiver string,
-	msgContent ...string) []chat.ChatMessage {
-	res := make([]chat.ChatMessage, len(msgContent))
-	streamID := chat.ComputeStreamID(sender, receiver)
+	msgContent ...string) []model.ChatMessage {
+	res := make([]model.ChatMessage, len(msgContent))
+	streamID := chatstream.ComputeStreamID(sender, receiver)
 	for i, currentMsgContent := range msgContent {
 
-		chatMessage := chat.ChatMessage{
-			Content: currentMsgContent,
-			ChatMetadata: chat.ChatMetadata{
+		chatMessage := model.ChatMessage{
+			MessageID: fmt.Sprintf("message_id_%d", i),
+			Content:   currentMsgContent,
+			ChatMetadata: model.ChatMetadata{
 				StreamID:   streamID,
 				SenderID:   sender,
 				ReceiverID: receiver,
@@ -38,7 +41,7 @@ func CreateChatMessages(
 func CreateRawChatMongoChangesPayloads(
 	t *testing.T,
 	eventType eventmodel.ChangeEventType,
-	messages ...chat.ChatMessage) []eventmodel.RawMongoChangePayload {
+	messages ...model.ChatMessage) []eventmodel.RawMongoChangePayload {
 	res := make([]eventmodel.RawMongoChangePayload, len(messages))
 
 	for i, msg := range messages {
@@ -55,8 +58,8 @@ func CreateRawChatMongoChangesPayloads(
 	return res
 }
 
-func WithContainingChatContent(content ...string) Predicate[chat.ChatMessage] {
-	return func(ctx context.Context, message chat.ChatMessage) bool {
+func WithContainingChatContent(content ...string) Predicate[model.ChatMessage] {
+	return func(ctx context.Context, message model.ChatMessage) bool {
 		return slices.Contains(content, message.Content)
 	}
 }

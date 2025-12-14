@@ -3,8 +3,8 @@ package generalnotificationhandlerstub
 import (
 	"net/http"
 
-	"github.com/domesama/chat-and-notifications/chat"
 	"github.com/domesama/chat-and-notifications/ittest/stub"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,7 +12,7 @@ func GeneralNotificationRouterStub(engine *gin.Engine) *ChatNotificationHandlerS
 	chatForwarderHandler := ChatNotificationHandlerStub{}
 
 	engine.POST(
-		"/noti/chat", chatForwarderHandler.chatNotificationHandler,
+		"/notifications/chat", chatForwarderHandler.chatNotificationHandler,
 	)
 
 	return &chatForwarderHandler
@@ -27,12 +27,12 @@ func (c *ChatNotificationHandlerStub) AddForwardChatMessageToWebSocketStub(stub 
 }
 
 type ChatNotificationStub struct {
-	Predicates     stub.Predicates[chat.ChatMessage]
+	Predicates     stub.Predicates[model.ChatMessage]
 	StubStatusCode int
 }
 
 func (c *ChatNotificationHandlerStub) chatNotificationHandler(gctx *gin.Context) {
-	var chatMessage chat.ChatMessage
+	var chatMessage model.ChatMessage
 	if err := gctx.ShouldBindJSON(&chatMessage); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

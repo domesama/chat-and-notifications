@@ -6,7 +6,12 @@ import (
 	"log/slog"
 
 	"github.com/domesama/chat-and-notifications/connections/connectionconfig"
+	"github.com/google/wire"
 	"github.com/redis/go-redis/v9"
+)
+
+var RedisSet = wire.NewSet(
+	connectionconfig.ProvideRedisClientConfig, ProvideRedisClient,
 )
 
 // ProvideRedisClient creates a Redis client with the provided configuration.
@@ -21,10 +26,18 @@ func ProvideRedisClient(cfg connectionconfig.RedisClientConfig) (redis.Client, f
 		},
 	)
 
+	cleanup := func() {
+		if err := client.Close(); err != nil {
+			slog.Error("failed to close Redis client", "error", err)
+		} else {
+			slog.Info("Redis client closed")
+		}
+	}
+
 	// Test connection
 	ctx := context.Background()
 	if err := client.Ping(ctx).Err(); err != nil {
-		return redis.Client{}, func() {}, fmt.Errorf("failed to connect to Redis: %w", err)
+		return redis.Client{}, cleanup, fmt.Errorf("failed to connect to Redis: %w", err)
 	}
 
 	slog.Info(
@@ -33,14 +46,6 @@ func ProvideRedisClient(cfg connectionconfig.RedisClientConfig) (redis.Client, f
 		"db", cfg.DB,
 		"pool_size", cfg.PoolSize,
 	)
-
-	cleanup := func() {
-		if err := client.Close(); err != nil {
-			slog.Error("failed to close Redis client", "error", err)
-		} else {
-			slog.Info("Redis client closed")
-		}
-	}
 
 	return *client, cleanup, nil
 }

@@ -1,4 +1,4 @@
-package chat
+package chatstream
 
 import (
 	"crypto/sha256"

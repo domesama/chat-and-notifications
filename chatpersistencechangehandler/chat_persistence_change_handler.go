@@ -16,8 +16,13 @@ func ProvideChatPersistenceChangeHandler(
 	server *doakes.TelemetryServer,
 	msgHandler ChatPersistenceChangeMessageHandler,
 	metric ChatPersistenceChangeEventMetric,
+	eventStore ChatPersistenceChangeEventStore,
 ) (ChatPersistenceChangeHandler, func(), error) {
-	eventHandler := event.NewSingleEventHandler[eventmodel.ChatMessagePersistenceChangeEvent](msgHandler, metric)
+	eventHandler := event.NewSingleEventHandler[eventmodel.ChatMessagePersistenceChangeEvent](
+		msgHandler,
+		metric,
+		event.WithEventStore(eventStore),
+	)
 
 	return connections.NewConsumerGroup(
 		conf.KafkaConnectionConfig,

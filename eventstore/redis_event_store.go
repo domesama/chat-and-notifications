@@ -18,19 +18,10 @@ type (
 	}
 
 	RedisEventStoreConfig struct {
-		DeduplicationTTL    time.Duration
-		EventStoreKeyPrefix string
+		DeduplicationTTL    time.Duration `envconfig:"DEDUPLICATION_TTL" default:"5m"`
+		EventStoreKeyPrefix string        `envconfig:"EVENT_STORE_KEY_PREFIX" required:"true"`
 	}
 )
-
-// ProvideRedisEventStore creates a new Redis-based event store for deduplication
-// This is kept for convenience but can be constructed directly
-func ProvideRedisEventStore(client redis.Client, conf RedisEventStoreConfig) EventStore[any] {
-	return RedisEventStore[any]{
-		RedisClient:           client,
-		RedisEventStoreConfig: conf,
-	}
-}
 
 func ProvideRedisEventStoreConfig() (conf RedisEventStoreConfig) {
 	envconfig.MustProcess("", &conf)

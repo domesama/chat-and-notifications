@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/domesama/chat-and-notifications/chat"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/domesama/chat-and-notifications/websocket"
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +11,7 @@ import (
 func (c ChatWebSocketHandler) SubscribeChatWebSocketByStreamID(gctx *gin.Context) (
 	key string, metadata websocket.Metadata,
 ) {
-	var req chat.ChatMetadata
+	var req model.ChatMetadata
 
 	// WebSocket connections pass metadata via query parameters
 	// (WebSocket upgrade requests don't support request bodies)

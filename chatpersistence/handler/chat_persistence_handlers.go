@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"github.com/domesama/chat-and-notifications/chat"
 	"github.com/domesama/chat-and-notifications/chatpersistence/service"
+	"github.com/domesama/chat-and-notifications/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +14,7 @@ type ChatPersistenceHandler struct {
 }
 
 func (c ChatPersistenceHandler) HandleChatPersistence(gctx *gin.Context) {
-	var chatMessage chat.ChatMessage
+	var chatMessage model.ChatMessage
 	if err := gctx.ShouldBindJSON(&chatMessage); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
