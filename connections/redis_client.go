@@ -29,8 +29,6 @@ func ProvideRedisClient(cfg connectionconfig.RedisClientConfig) (redis.Client, f
 	cleanup := func() {
 		if err := client.Close(); err != nil {
 			slog.Error("failed to close Redis client", "error", err)
-		} else {
-			slog.Info("Redis client closed")
 		}
 	}
 
@@ -39,13 +37,6 @@ func ProvideRedisClient(cfg connectionconfig.RedisClientConfig) (redis.Client, f
 	if err := client.Ping(ctx).Err(); err != nil {
 		return redis.Client{}, cleanup, fmt.Errorf("failed to connect to Redis: %w", err)
 	}
-
-	slog.Info(
-		"Redis client connected",
-		"addr", cfg.Addr,
-		"db", cfg.DB,
-		"pool_size", cfg.PoolSize,
-	)
 
 	return *client, cleanup, nil
 }

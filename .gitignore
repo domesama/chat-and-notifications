@@ -26,6 +26,7 @@ vendor
 # Env
 .env*
 !.env.example
+!.env.integration
 !.env.unittest
 .todos.json
 

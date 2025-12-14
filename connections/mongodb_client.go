@@ -3,7 +3,6 @@ package connections
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"time"
 
 	"github.com/domesama/chat-and-notifications/connections/connectionconfig"
@@ -35,16 +34,10 @@ func ProvideMongoClient(cfg connectionconfig.MongoDBConfig) (*mongo.Client, func
 		return nil, func() {}, fmt.Errorf("failed to ping MongoDB: %w", err)
 	}
 
-	slog.Info("MongoDB client connected", "uri", cfg.URI)
-
 	cleanup := func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		if err := client.Disconnect(ctx); err != nil {
-			slog.Error("failed to disconnect MongoDB client", "error", err)
-		} else {
-			slog.Info("MongoDB client disconnected")
-		}
+		_ = client.Disconnect(ctx)
 	}
 
 	return client, cleanup, nil

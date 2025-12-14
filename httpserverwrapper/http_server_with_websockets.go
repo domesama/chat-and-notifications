@@ -79,7 +79,6 @@ func (s HTTPWithWebSocketServer) upgradeToWebSocket(gctx *gin.Context) (conn *go
 }
 
 func (s HTTPWithWebSocketServer) Shutdown() {
-	slog.Info("shutting down HTTP server")
 
 	// Close all WebSocket connections gracefully
 	s.wsManager.CloseAll(1001, "server shutting down")

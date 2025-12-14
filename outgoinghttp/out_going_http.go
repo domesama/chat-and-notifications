@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 
 	"github.com/goccy/go-json"
@@ -69,10 +68,7 @@ func CallHTTP[T any](
 	response, err := client.Do(req)
 	if response != nil {
 		defer func() {
-			err = response.Body.Close()
-			if err != nil {
-				slog.Warn("unable to close response.Body", "error", err)
-			}
+			_ = response.Body.Close()
 		}()
 	}
 	if err != nil || response == nil {

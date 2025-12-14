@@ -12,5 +12,5 @@ installTool() {
     ${GO_CMD} install ${url}@${expectedVer}
   fi
 }
-installTool "wireprovider" "github.com/domesama/wireprovider@v1.0.2"
-installTool "wire" "github.com/wireinject/wire v0.7.1"
+installTool "wireprovider" "github.com/domesama/wireprovider" "v1.0.3"
+installTool "wire" "github.com/wireinject/wire/cmd/wire" "v0.7.1"
