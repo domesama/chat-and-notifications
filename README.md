@@ -109,7 +109,7 @@ make build
 
 ## Running Locally
 
-> **📖 See [RUNNING_LOCALLY.md](./RUNNING_LOCALLY.md) for detailed instructions on running all services locally.**
+> **📖 See [local.md](./local.md) for detailed instructions on running all services locally.**
 
 Quick start for local development:
 
