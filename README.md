@@ -107,6 +107,22 @@ make build
 # - .bin/emailhandler
 ```
 
+## Running Locally
+
+> **📖 See [RUNNING_LOCALLY.md](./RUNNING_LOCALLY.md) for detailed instructions on running all services locally.**
+
+Quick start for local development:
+
+1. **Start dependencies**: `cd docker && docker-compose up -d`
+2. **Configure services**: Edit `.env.local.*` files for each service
+3. **Start services**: Run each binary with `source .env.local.<service> && .bin/<service>`
+
+The local setup includes:
+- Kafka on `localhost:9092` with UI at `http://localhost:8889`
+- MongoDB on `localhost:47017` 
+- Redis on `localhost:46379`
+- Service health checks at `http://localhost:808x/health`
+
 ## Running Tests
 
 ### Start Integration Test Dependencies
