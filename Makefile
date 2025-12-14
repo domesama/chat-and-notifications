@@ -37,7 +37,7 @@ pregenerate:
 	@./pregenerate
 
 # Build all binaries
-build: .bin/chatpersistence .bin/chatpersistencechangehandler .bin/chatwebsocketshandler .bin/generalnotificationshandler
+build: .bin/chatpersistence .bin/chatpersistencechangehandler .bin/chatwebsocketshandler .bin/emailhandler .bin/generalnotificationshandler
 
 # Tidy go modules
 go.sum: go.mod
@@ -56,6 +56,10 @@ go.sum: go.mod
 .bin/chatwebsocketshandler: go.mod go.sum $(GO_FILES)
 	@echo "Building chatwebsocketshandler..."
 	@cd cmd/chatwebsocketshandler && $(GO) build $(GOBUILDFLAGS) -o ../../.bin/chatwebsocketshandler .
+
+.bin/emailhandler: go.mod go.sum $(GO_FILES)
+	@echo "Building emailhandler..."
+	@cd cmd/emailhandler && $(GO) build $(GOBUILDFLAGS) -o ../../.bin/emailhandler .
 
 .bin/generalnotificationshandler: go.mod go.sum $(GO_FILES)
 	@echo "Building generalnotificationshandler..."

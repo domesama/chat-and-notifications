@@ -84,6 +84,15 @@ go mod download
 make generate
 ```
 
+**If `make generate` fails**, manually install the required tools:
+
+```bash
+go install github.com/domesama/wireprovider@v1.0.3
+go install github.com/wireinject/wire/cmd/wire@v0.7.1
+```
+
+Then run `make generate` again.
+
 ### Build Services
 
 ```bash
@@ -153,14 +162,6 @@ This will:
 3. Generate provider functions
 4. Run Google Wire for dependency graph construction
 
-**If `make generate` fails**, manually install the required tools:
-
-```bash
-go install github.com/domesama/wireprovider@v1.0.3
-go install github.com/wireinject/wire/cmd/wire@v0.7.1
-```
-
-Then run `make generate` again.
 
 ### Clean Build Artifacts
 
